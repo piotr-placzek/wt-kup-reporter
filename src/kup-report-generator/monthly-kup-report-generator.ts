@@ -13,7 +13,7 @@ function reportHeader(employee: string, month: string) {
   return [
     [reportTitleCell('Raport czasu pracy')],
     [specialDescriptionCell('Pracownik'), specialValueCell(employee)],
-    [specialDescriptionCell('Miesiąc'), specialDescriptionCell(month)],
+    [specialDescriptionCell('Miesiąc'), specialValueCell(month)],
   ];
 }
 
@@ -76,7 +76,8 @@ export function generateMonthlyKupReport(
 
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.aoa_to_sheet(rows);
+  worksheet['!cols'] = [{ wch: 19 }, { wch: 19 }, { wch: 50 }];
 
   XLSX.utils.book_append_sheet(workbook, worksheet);
-  XLSX.writeFile(workbook, targetFilePath(suffix, dir));
+  XLSX.writeFile(workbook, targetFilePath(suffix, dir), { cellStyles: true });
 }

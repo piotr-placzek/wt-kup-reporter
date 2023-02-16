@@ -79,7 +79,7 @@ export const tableHeaderCell = (v: string) => ({
 export const tableContentCellWithAlternatingColours = (
   v: any,
   index: number,
-  vAlign: 'left' | 'center' | 'right' = 'center',
+  hAlign: 'left' | 'center' | 'right' = 'center',
   numFmt: '0' | '0.00' | '0.00%' = '0'
 ) => ({
   v,
@@ -92,8 +92,8 @@ export const tableContentCellWithAlternatingColours = (
       fgColor: { rgb: index % 2 ? 'd9e2f3' : 'ffffff' },
     },
     alignment: {
-      vertical: vAlign,
-      horizontal: 'center',
+      vertical: 'center',
+      horizontal: hAlign,
     },
     border,
     numFmt,

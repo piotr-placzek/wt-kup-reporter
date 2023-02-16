@@ -30,7 +30,7 @@ function reportHeader(employee, month) {
     return [
         [(0, report_formatting_1.reportTitleCell)('Raport czasu pracy')],
         [(0, report_formatting_1.specialDescriptionCell)('Pracownik'), (0, report_formatting_1.specialValueCell)(employee)],
-        [(0, report_formatting_1.specialDescriptionCell)('Miesiąc'), (0, report_formatting_1.specialDescriptionCell)(month)],
+        [(0, report_formatting_1.specialDescriptionCell)('Miesiąc'), (0, report_formatting_1.specialValueCell)(month)],
     ];
 }
 function tableHeader(columns) {
@@ -70,8 +70,9 @@ function generateMonthlyKupReport(employeeName, range, totalWorkingHours, monthl
     rows.push((0, report_formatting_1.signatureSection)('Podpis pracodawcy', 2));
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.aoa_to_sheet(rows);
+    worksheet['!cols'] = [{ wch: 19 }, { wch: 19 }, { wch: 100 }];
     XLSX.utils.book_append_sheet(workbook, worksheet);
-    XLSX.writeFile(workbook, targetFilePath(suffix, dir));
+    XLSX.writeFile(workbook, targetFilePath(suffix, dir), { cellStyles: true });
 }
 exports.generateMonthlyKupReport = generateMonthlyKupReport;
 //# sourceMappingURL=monthly-kup-report-generator.js.map

@@ -150,7 +150,7 @@ export declare const tableHeaderCell: (v: string) => {
         };
     };
 };
-export declare const tableContentCellWithAlternatingColours: (v: any, index: number, vAlign?: 'left' | 'center' | 'right', numFmt?: '0' | '0.00' | '0.00%') => {
+export declare const tableContentCellWithAlternatingColours: (v: any, index: number, hAlign?: 'left' | 'center' | 'right', numFmt?: '0' | '0.00' | '0.00%') => {
     v: any;
     t: string;
     s: {
@@ -163,8 +163,8 @@ export declare const tableContentCellWithAlternatingColours: (v: any, index: num
             };
         };
         alignment: {
-            vertical: "left" | "center" | "right";
-            horizontal: string;
+            vertical: string;
+            horizontal: "left" | "center" | "right";
         };
         border: {
             left: {
