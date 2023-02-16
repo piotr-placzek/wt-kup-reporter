@@ -40,9 +40,15 @@ export const specialDescriptionCell = (v: string) => ({
   },
 });
 
-export const specialValueCell = (v: string, numFmt: '0' | '0.00' | '0.00%' = '0') => ({
+export const specialValueCell = (
+  v: string | number,
+  type: 's' | 'n' = 's',
+  numFmt: '0' | '0.00' | '0.00%' = '0',
+  formula?: string
+) => ({
   v,
-  t: 's',
+  t: type,
+  f: formula,
   s: {
     font: {
       sz: 10,
@@ -77,13 +83,16 @@ export const tableHeaderCell = (v: string) => ({
 });
 
 export const tableContentCellWithAlternatingColours = (
-  v: any,
+  v: string | number,
   index: number,
   hAlign: 'left' | 'center' | 'right' = 'center',
-  numFmt: '0' | '0.00' | '0.00%' = '0'
+  type: 's' | 'n' = 's',
+  numFmt: '0' | '0.00' | '0.00%' = '0',
+  formula?: string
 ) => ({
   v,
-  t: 's',
+  t: type,
+  f: formula,
   s: {
     font: {
       sz: 9,
@@ -104,10 +113,11 @@ export const signatureSection = (v: string, colspan: number) => {
   const signaturePlaceholder = [];
   for (let i = 0; i < colspan; i++) {
     signaturePlaceholder.push({
+      v: '',
       t: 's',
       s: {
         border: {
-          bottom: border.bottom,
+          bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
         },
       },
     });

@@ -11,7 +11,7 @@ import {
 
 function reportHeader(employee: string, month: string) {
   return [
-    [reportTitleCell('Raport czasu pracy')],
+    [reportTitleCell('Raport czasu pracy twórczej')],
     [specialDescriptionCell('Pracownik'), specialValueCell(employee)],
     [specialDescriptionCell('Miesiąc'), specialValueCell(month)],
   ];
@@ -23,31 +23,37 @@ function tableHeader(columns: string[]) {
 
 function tableContent(monthlySummaries: DailySummary[]) {
   return monthlySummaries.map((dailySummary: DailySummary, index: number) => {
+    const hours = dailySummary.data.reduce((a: number, c: BranchSummary) => a + c.time, 0);
+    const branches = dailySummary.data
+      .filter((b) => b.name !== 'Unknown')
+      .reduce((a: string, c: BranchSummary, i: number) => a + (i > 0 ? '\n' : '') + c.name, '');
     return [
       tableContentCellWithAlternatingColours(dailySummary.date, index),
-      tableContentCellWithAlternatingColours(
-        dailySummary.data.reduce((a: number, c: BranchSummary) => a + c.time, 0),
-        index,
-        'center',
-        '0.00'
-      ),
-      tableContentCellWithAlternatingColours(
-        dailySummary.data.reduce((a: string, c: BranchSummary, i: number) => a + c.name + (i > 0 ? '\n' : ''), ''),
-        index,
-        'left'
-      ),
+      tableContentCellWithAlternatingColours(hours, index, 'center', 'n', '0.00'),
+      tableContentCellWithAlternatingColours(hours / 8, index, 'center', 'n', '0.00%', `${hours}/8`),
+      tableContentCellWithAlternatingColours(branches, index, 'left'),
     ];
   });
 }
 
 function totalHours(amountOfRows: number) {
-  return [specialDescriptionCell('Godzin razem'), specialValueCell(`=SUM(B6:B${6 + amountOfRows - 1})`, '0.00')];
+  return [
+    specialDescriptionCell('Godzin razem'),
+    tableContentCellWithAlternatingColours(undefined, 0, 'center', 'n', '0.00', `SUM(B6:B${6 + amountOfRows - 1})`),
+  ];
 }
 
 function totalHoursPercentage(amountOfRows: number, totalWorkingHours: number) {
   return [
     specialDescriptionCell('Procent godzin'),
-    specialValueCell(`=B${6 + amountOfRows}*100/${totalWorkingHours}`, '0.00%'),
+    tableContentCellWithAlternatingColours(
+      undefined,
+      1,
+      'center',
+      'n',
+      '0.00%',
+      `B${6 + amountOfRows}/${totalWorkingHours}`
+    ),
   ];
 }
 
@@ -66,17 +72,18 @@ export function generateMonthlyKupReport(
   const rows = [];
   rows.push(...reportHeader(employeeName, `${range.month}/${range.year}`));
   rows.push([]);
-  rows.push(tableHeader(['Data', 'Ilość godzin', 'Zadania']));
+  rows.push(tableHeader(['Data', 'Ilość godzin', '%', 'Zadania']));
   rows.push(...tableContent(monthlySummaries));
   rows.push(totalHours(monthlySummaries.length));
   rows.push(totalHoursPercentage(monthlySummaries.length, totalWorkingHours));
   rows.push([]);
-  rows.push(signatureSection('Podpis pracownika', 2));
-  rows.push(signatureSection('Podpis pracodawcy', 2));
+  rows.push(signatureSection('Podpis pracownika', 3));
+  rows.push([]);
+  rows.push(signatureSection('Podpis pracodawcy', 3));
 
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.aoa_to_sheet(rows);
-  worksheet['!cols'] = [{ wch: 19 }, { wch: 19 }, { wch: 50 }];
+  worksheet['!cols'] = [{ wch: 19 }, { wch: 15 }, { wch: 15 }, { wch: 50 }];
 
   XLSX.utils.book_append_sheet(workbook, worksheet);
   XLSX.writeFile(workbook, targetFilePath(suffix, dir), { cellStyles: true });
