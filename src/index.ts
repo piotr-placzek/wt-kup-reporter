@@ -6,7 +6,6 @@ import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { generateMonthlyKupReport } from './kup-report-generator';
 import { endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
-// import { generate as generateMonthlyKupReport } from './kup-report-generator/monthly-kup-report-generator';
 
 const args = yargs(hideBin(process.argv))
   .option('month', {
@@ -45,7 +44,7 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    generateMonthlyKupReport(EMPLOYEE_NAME, {year, month}, monthlySummaries, `M${args.month}`, './reports/');
+    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, monthlySummaries, `M${args.month}`, './reports/');
   } catch (error) {
     console.error(error);
   }
