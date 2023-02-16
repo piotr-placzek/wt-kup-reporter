@@ -1,5 +1,3 @@
-import { EMPLOYEE_NAME } from '../config';
-
 const border = {
   left: { style: 'thin', color: { rgb: 'a5a5a5' } },
   top: { style: 'thin', color: { rgb: 'a5a5a5' } },
@@ -22,7 +20,7 @@ export const reportTitleCell = (v: string) => ({
   },
 });
 
-export const employeeDescriptionCell = (v: string) => ({
+export const specialDescriptionCell = (v: string) => ({
   v,
   t: 's',
   s: {
@@ -42,42 +40,7 @@ export const employeeDescriptionCell = (v: string) => ({
   },
 });
 
-export const employeeValueCell = (v: string) => ({
-  v,
-  t: 's',
-  s: {
-    font: {
-      sz: 10,
-    },
-    alignment: {
-      vertical: 'center',
-      horizontal: 'left',
-    },
-    border,
-  },
-});
-
-export const monthDescriptionCell = (v: string) => ({
-  v,
-  t: 's',
-  s: {
-    font: {
-      sz: 10,
-      bold: true,
-      color: { rgb: 'ffffff' },
-    },
-    fill: {
-      fgColor: { rgb: '222a35' },
-    },
-    alignment: {
-      vertical: 'center',
-      horizontal: 'right',
-    },
-    border,
-  },
-});
-
-export const monthValueCell = (v: string) => ({
+export const specialValueCell = (v: string) => ({
   v,
   t: 's',
   s: {

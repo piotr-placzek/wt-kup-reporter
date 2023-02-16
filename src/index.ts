@@ -1,7 +1,7 @@
 import { argv } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { PROJECT_NAME, WAKATIME_API_KEY } from './config';
+import { EMPLOYEE_NAME, PROJECT_NAME, WAKATIME_API_KEY } from './config';
 import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { generateMonthlyKupReport } from './kup-report-generator';
 import { endOfMonth, startOfMonth } from './utils';
@@ -33,7 +33,8 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const range = getRange(args.year, args.month);
+  const { year, month } = args;
+  const range = getRange(year, month);
   console.log(range);
 
   const client = new WakatimeClient(WAKATIME_API_KEY);
@@ -44,7 +45,7 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    generateMonthlyKupReport(monthlySummaries, `M${args.month}`, './reports/');
+    generateMonthlyKupReport(EMPLOYEE_NAME, {year, month}, monthlySummaries, `M${args.month}`, './reports/');
   } catch (error) {
     console.error(error);
   }

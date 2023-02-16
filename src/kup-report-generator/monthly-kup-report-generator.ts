@@ -1,21 +1,18 @@
 import { BranchSummary, DailySummary } from '../data.interface';
 import * as XLSX from 'xlsx-js-style';
 import {
-  employeeDescriptionCell,
-  employeeValueCell,
-  monthDescriptionCell,
-  monthValueCell,
+  specialDescriptionCell,
+  specialValueCell,
   reportTitleCell,
   tableContentCellWithAlternatingColours,
   tableHeaderCell,
-} from './report-formating';
-import { EMPLOYEE_NAME } from '../config';
+} from './report-formatting';
 
 function reportHeader(employee: string, month: string) {
   return [
     [reportTitleCell('Raport czasu pracy')],
-    [employeeDescriptionCell('Pracownik'), employeeValueCell(employee)],
-    [monthDescriptionCell('Miesiąc'), monthValueCell(month)],
+    [specialDescriptionCell('Pracownik'), specialValueCell(employee)],
+    [specialDescriptionCell('Miesiąc'), specialDescriptionCell(month)],
   ];
 }
 
@@ -44,12 +41,14 @@ function targetFilePath(suffix?: string | number, dir?: string): string {
 }
 
 export function generateMonthlyKupReport(
+  employeeName: string,
+  range: { year: number; month: number },
   monthlySummaries: DailySummary[],
   suffix?: string | number,
   dir?: string
 ): any {
   const rows = [];
-  rows.push(...reportHeader(EMPLOYEE_NAME, '????'));
+  rows.push(...reportHeader(employeeName, `${range.month}/${range.year}`));
   rows.push([]);
   rows.push(tableHeader(['Data', 'Ilość godzin', 'Zadania']));
   rows.push(...tableContent(monthlySummaries));
