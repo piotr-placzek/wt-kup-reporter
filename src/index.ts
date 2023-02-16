@@ -44,7 +44,7 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, monthlySummaries, `M${args.month}`, './reports/');
+    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, 180, monthlySummaries, `M${args.month}`, './reports/');
   } catch (error) {
     console.error(error);
   }

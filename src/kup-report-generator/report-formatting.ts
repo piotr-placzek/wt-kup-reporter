@@ -40,7 +40,7 @@ export const specialDescriptionCell = (v: string) => ({
   },
 });
 
-export const specialValueCell = (v: string) => ({
+export const specialValueCell = (v: string, numFmt: '0' | '0.00' | '0.00%' = '0') => ({
   v,
   t: 's',
   s: {
@@ -52,6 +52,7 @@ export const specialValueCell = (v: string) => ({
       horizontal: 'left',
     },
     border,
+    numFmt,
   },
 });
 
@@ -75,7 +76,12 @@ export const tableHeaderCell = (v: string) => ({
   },
 });
 
-export const tableContentCellWithAlternatingColours = (v: any, index: number) => ({
+export const tableContentCellWithAlternatingColours = (
+  v: any,
+  index: number,
+  vAlign: 'left' | 'center' | 'right' = 'center',
+  numFmt: '0' | '0.00' | '0.00%' = '0'
+) => ({
   v,
   t: 's',
   s: {
@@ -86,9 +92,25 @@ export const tableContentCellWithAlternatingColours = (v: any, index: number) =>
       fgColor: { rgb: index % 2 ? 'd9e2f3' : 'ffffff' },
     },
     alignment: {
-      vertical: 'center',
+      vertical: vAlign,
       horizontal: 'center',
     },
     border,
+    numFmt,
   },
 });
+
+export const signatureSection = (v: string, colspan: number) => {
+  const signaturePlaceholder = [];
+  for (let i = 0; i < colspan; i++) {
+    signaturePlaceholder.push({
+      t: 's',
+      s: {
+        border: {
+          bottom: border.bottom,
+        },
+      },
+    });
+  }
+  return [specialDescriptionCell(v), ...signaturePlaceholder];
+};

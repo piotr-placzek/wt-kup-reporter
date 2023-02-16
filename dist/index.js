@@ -33,13 +33,14 @@ function getRange(year, month) {
     };
 }
 async function main() {
-    const range = getRange(args.year, args.month);
+    const { year, month } = args;
+    const range = getRange(year, month);
     console.log(range);
     const client = new wakatime_1.WakatimeClient(config_1.WAKATIME_API_KEY);
     try {
         const wtSummaries = await client.getCurrentUserSummaries(config_1.PROJECT_NAME, range.start, range.end);
         const monthlySummaries = (0, monthly_summaries_factory_1.monthlySummariesFactory)(wtSummaries);
-        (0, kup_report_generator_1.generateMonthlyKupReport)(monthlySummaries, `M${args.month}`, './reports/');
+        (0, kup_report_generator_1.generateMonthlyKupReport)(config_1.EMPLOYEE_NAME, { year, month }, 180, monthlySummaries, `M${args.month}`, './reports/');
     }
     catch (error) {
         console.error(error);
