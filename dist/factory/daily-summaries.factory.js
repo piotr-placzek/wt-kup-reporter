@@ -6,7 +6,7 @@ function dailySummariesFactory(wakaTimeDailySummary) {
         date: wakaTimeDailySummary.range.date,
         data: wakaTimeDailySummary.branches?.map((branch) => ({
             name: branch.name,
-            time: branch.decimal,
+            time: parseFloat(branch.decimal),
         })) || [],
     };
 }

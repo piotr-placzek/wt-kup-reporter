@@ -1,1 +1,2 @@
-export declare function generateMonthlyKupReport(target_directory_path: any, data: any, delimiter?: string): void;
+import { DailySummary } from '../data.interface';
+export declare function generateMonthlyKupReport(monthlySummaries: DailySummary[], suffix?: string | number, dir?: string): any;

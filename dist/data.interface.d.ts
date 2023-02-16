@@ -1,6 +1,6 @@
 export interface BranchSummary {
     name: string;
-    time: string;
+    time: number;
 }
 export interface DailySummary {
     date: string;

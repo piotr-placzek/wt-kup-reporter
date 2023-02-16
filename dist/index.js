@@ -39,7 +39,7 @@ async function main() {
     try {
         const wtSummaries = await client.getCurrentUserSummaries(config_1.PROJECT_NAME, range.start, range.end);
         const monthlySummaries = (0, monthly_summaries_factory_1.monthlySummariesFactory)(wtSummaries);
-        (0, kup_report_generator_1.generateMonthlyKupReport)('./reports', monthlySummaries);
+        (0, kup_report_generator_1.generateMonthlyKupReport)(monthlySummaries, `M${args.month}`, './reports/');
     }
     catch (error) {
         console.error(error);
