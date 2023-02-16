@@ -7,7 +7,7 @@ export function dailySummariesFactory(wakaTimeDailySummary: WakaTimeDailySummary
     data:
       wakaTimeDailySummary.branches?.map((branch: WakaTimeBranchSummary) => ({
         name: branch.name,
-        time: branch.decimal,
+        time: parseFloat(branch.decimal),
       })) || [],
   };
 }

@@ -1,14 +1,19 @@
 import { argv } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { PROJECT_NAME, WAKATIME_API_KEY } from './config';
+import { EMPLOYEE_NAME, PROJECT_NAME, WAKATIME_API_KEY } from './config';
 import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { generateMonthlyKupReport } from './kup-report-generator';
 import { endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
-// import { generate as generateMonthlyKupReport } from './kup-report-generator/monthly-kup-report-generator';
 
 const args = yargs(hideBin(process.argv))
+  .option('working-hours', {
+    alias: 't',
+    type: 'number',
+    describe: 'Total amount of working hours',
+    required: true,
+  })
   .option('month', {
     alias: 'm',
     type: 'number',
@@ -33,7 +38,8 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const range = getRange(args.year, args.month);
+  const { year, month, t } = args;
+  const range = getRange(year, month);
   console.log(range);
 
   const client = new WakatimeClient(WAKATIME_API_KEY);
@@ -44,7 +50,7 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    generateMonthlyKupReport('./reports', monthlySummaries);
+    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, t, monthlySummaries, `M${args.month}`, './reports/');
   } catch (error) {
     console.error(error);
   }
