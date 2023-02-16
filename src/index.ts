@@ -1,10 +1,9 @@
-'use strict';
-const CONFIG = require('./config');
-const WakatimeClient = require('./wakatime/client');
-const Summaries = require('./wakatime/summaries');
-const generateMonthlyKupReport = require('./kup-report-generator/monthly-kup-report-generator');
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import { PROJECT_NAME, WAKATIME_API_KEY } from './config';
+import { WakatimeClient } from './wakatime/client';
+import { Summaries } from './wakatime/summaries';
+import { generate as generateMonthlyKupReport } from './kup-report-generator/monthly-kup-report-generator';
 
 const args = yargs(hideBin(process.argv))
   .option('month', {
@@ -23,8 +22,10 @@ const args = yargs(hideBin(process.argv))
   })
   .help('h').argv;
 
-const client = new WakatimeClient(CONFIG.WAKATIME_API_KEY);
-const summaries = new Summaries(client, CONFIG.PROJECT_NAME);
+  console.log(args)
+
+const client = new WakatimeClient(WAKATIME_API_KEY);
+const summaries = new Summaries(client, PROJECT_NAME);
 
 summaries.getBranchSummariesForMonth(2023, 2).then((data) => {
   generateMonthlyKupReport('./reports', data);
