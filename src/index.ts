@@ -8,6 +8,12 @@ import { endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
+  .option('working-hours', {
+    alias: 't',
+    type: 'number',
+    describe: 'Total amount of working hours',
+    required: true,
+  })
   .option('month', {
     alias: 'm',
     type: 'number',
@@ -32,7 +38,7 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const { year, month } = args;
+  const { year, month, t } = args;
   const range = getRange(year, month);
   console.log(range);
 
@@ -44,7 +50,7 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, 160, monthlySummaries, `M${args.month}`, './reports/');
+    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, t, monthlySummaries, `M${args.month}`, './reports/');
   } catch (error) {
     console.error(error);
   }
