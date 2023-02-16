@@ -1,9 +1,12 @@
+import { argv } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { PROJECT_NAME, WAKATIME_API_KEY } from './config';
-import { WakatimeClient } from './wakatime/client';
-import { Summaries } from './wakatime/summaries';
-import { generate as generateMonthlyKupReport } from './kup-report-generator/monthly-kup-report-generator';
+import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
+import { generateMonthlyKupReport } from './kup-report-generator';
+import { endOfMonth, startOfMonth } from './utils';
+import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
+// import { generate as generateMonthlyKupReport } from './kup-report-generator/monthly-kup-report-generator';
 
 const args = yargs(hideBin(process.argv))
   .option('month', {
@@ -22,11 +25,29 @@ const args = yargs(hideBin(process.argv))
   })
   .help('h').argv;
 
-  console.log(args)
+function getRange(year: number, month: number): { start: Date; end: Date } {
+  return {
+    start: startOfMonth(year, month),
+    end: endOfMonth(year, month),
+  };
+}
 
-const client = new WakatimeClient(WAKATIME_API_KEY);
-const summaries = new Summaries(client, PROJECT_NAME);
+async function main(): Promise<void> {
+  const range = getRange(args.year, args.month);
+  console.log(range);
 
-summaries.getBranchSummariesForMonth(2023, 2).then((data) => {
-  generateMonthlyKupReport('./reports', data);
-});
+  const client = new WakatimeClient(WAKATIME_API_KEY);
+  try {
+    const wtSummaries: WakaTimeDailySummary[] = await client.getCurrentUserSummaries(
+      PROJECT_NAME,
+      range.start,
+      range.end
+    );
+    const monthlySummaries = monthlySummariesFactory(wtSummaries);
+    generateMonthlyKupReport('./reports', monthlySummaries);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+main();

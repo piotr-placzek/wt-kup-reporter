@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const yargs_1 = __importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
 const config_1 = require("./config");
-const client_1 = require("./wakatime/client");
-const summaries_1 = require("./wakatime/summaries");
-const monthly_kup_report_generator_1 = require("./kup-report-generator/monthly-kup-report-generator");
+const monthly_summaries_factory_1 = require("./factory/monthly-summaries.factory");
+const kup_report_generator_1 = require("./kup-report-generator");
+const utils_1 = require("./utils");
+const wakatime_1 = require("./wakatime");
 const args = (0, yargs_1.default)((0, helpers_1.hideBin)(process.argv))
     .option('month', {
     alias: 'm',
@@ -25,10 +26,24 @@ const args = (0, yargs_1.default)((0, helpers_1.hideBin)(process.argv))
     default: new Date(Date.now()).getFullYear(),
 })
     .help('h').argv;
-console.log(args);
-const client = new client_1.WakatimeClient(config_1.WAKATIME_API_KEY);
-const summaries = new summaries_1.Summaries(client, config_1.PROJECT_NAME);
-summaries.getBranchSummariesForMonth(2023, 2).then((data) => {
-    (0, monthly_kup_report_generator_1.generate)('./reports', data);
-});
+function getRange(year, month) {
+    return {
+        start: (0, utils_1.startOfMonth)(year, month),
+        end: (0, utils_1.endOfMonth)(year, month),
+    };
+}
+async function main() {
+    const range = getRange(args.year, args.month);
+    console.log(range);
+    const client = new wakatime_1.WakatimeClient(config_1.WAKATIME_API_KEY);
+    try {
+        const wtSummaries = await client.getCurrentUserSummaries(config_1.PROJECT_NAME, range.start, range.end);
+        const monthlySummaries = (0, monthly_summaries_factory_1.monthlySummariesFactory)(wtSummaries);
+        (0, kup_report_generator_1.generateMonthlyKupReport)('./reports', monthlySummaries);
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+main();
 //# sourceMappingURL=index.js.map

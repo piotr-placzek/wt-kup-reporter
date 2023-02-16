@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WakatimeClient = void 0;
 const axios_1 = require("axios");
@@ -16,8 +16,8 @@ class WakatimeClient {
         return this.axios
             .get('users/current/summaries', {
             params: {
-                start,
-                end,
+                start: start.toISOString(),
+                end: end.toISOString(),
                 project,
             },
         })
