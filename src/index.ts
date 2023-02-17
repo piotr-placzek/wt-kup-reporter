@@ -1,4 +1,3 @@
-import { argv } from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { EMPLOYEE_NAME, PROJECT_NAME, WAKATIME_API_KEY } from './config';
