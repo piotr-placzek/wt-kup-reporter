@@ -1,24 +1,27 @@
 import { BranchSummary, DailySummary } from '../data.interface';
 import * as XLSX from 'xlsx-js-style';
 import {
-  specialDescriptionCell,
-  specialValueCell,
-  reportTitleCell,
   tableContentCellWithAlternatingColours,
-  tableHeaderCell,
   signatureSection,
 } from './report-formatting';
+import { Cell } from 'src/xlsx-utils';
 
-function reportHeader(employee: string, month: string) {
+function reportHeader(employee: string, month: string): Array<Array<XLSX.CellObject>> {
   return [
-    [reportTitleCell('Raport czasu pracy twórczej')],
-    [specialDescriptionCell('Pracownik'), specialValueCell(employee)],
-    [specialDescriptionCell('Miesiąc'), specialValueCell(month)],
+    [new Cell('s').setPredefinedStyle('Title').setData('Raport czasu pracy twórczej').value],
+    [
+      new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Pracownik').value,
+      new Cell('s').setPredefinedStyle('CustomValue').setData(employee).value,
+    ],
+    [
+      new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Miesiąc').value,
+      new Cell('s').setPredefinedStyle('CustomValue').setData(month).value,
+    ],
   ];
 }
 
-function tableHeader(columns: string[]) {
-  return columns.map((columnName: string) => tableHeaderCell(columnName));
+function tableHeader(columns: string[]): Array<XLSX.CellObject>{
+  return columns.map((columnName: string) => new Cell('s').setPredefinedStyle('TableHeader').setData(columnName.toLocaleUpperCase()).value);
 }
 
 function tableContent(monthlySummaries: DailySummary[]) {
@@ -36,24 +39,21 @@ function tableContent(monthlySummaries: DailySummary[]) {
   });
 }
 
-function totalHours(amountOfRows: number) {
+function totalHours(amountOfRows: number): Array<XLSX.CellObject> {
   return [
-    specialDescriptionCell('Godzin razem'),
-    tableContentCellWithAlternatingColours(undefined, 0, 'center', 'n', '0.00', `SUM(B6:B${6 + amountOfRows - 1})`),
+    new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Godzin razem').value,
+    new Cell('n').setPredefinedStyle('CustomValue').setHorizontalAlignment('center').setNumberFormat('0.00').setFormula(`SUM(B6:B${6 + amountOfRows - 1})`).value
   ];
 }
 
-function totalHoursPercentage(amountOfRows: number, totalWorkingHours: number) {
+function totalHoursPercentage(amountOfRows: number, totalWorkingHours: number): Array<XLSX.CellObject> {
   return [
-    specialDescriptionCell('Procent godzin'),
-    tableContentCellWithAlternatingColours(
-      undefined,
-      1,
-      'center',
-      'n',
-      '0.00%',
-      `B${6 + amountOfRows}/${totalWorkingHours}`
-    ),
+    new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Procent godzin').value,
+    new Cell('n')
+      .setPredefinedStyle('CustomValue')
+      .setHorizontalAlignment('center')
+      .setNumberFormat('0.00%')
+      .setFormula(`B${6 + amountOfRows}/${totalWorkingHours}`).value,
   ];
 }
 

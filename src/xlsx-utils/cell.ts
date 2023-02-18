@@ -1,5 +1,5 @@
 import { CellObject, ExcelDataType } from 'xlsx-js-style/types';
-import { CellStyle, CellStyles } from './cell.styles';
+import { CellStyle } from './cell.styles';
 
 export class Cell {
   private readonly cell: CellObject;
