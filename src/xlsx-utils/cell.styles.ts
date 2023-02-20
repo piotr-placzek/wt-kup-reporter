@@ -1,5 +1,7 @@
 export type CellStyle = keyof typeof CellStyles;
 
+const commonFontName = 'Century Gothic';
+
 const commonBorderStyle = {
   left: { style: 'thin', color: { rgb: 'a5a5a5' } },
   top: { style: 'thin', color: { rgb: 'a5a5a5' } },
@@ -7,10 +9,14 @@ const commonBorderStyle = {
   bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
 };
 
+const Clean = {};
+
 const Title = {
   font: {
     sz: 22,
+    bold: true,
     color: { rgb: '595959' },
+    name: commonFontName,
   },
   alignment: {
     vertical: 'center',
@@ -23,6 +29,7 @@ const CustomValueDescription = {
     sz: 10,
     bold: true,
     color: { rgb: 'ffffff' },
+    name: commonFontName,
   },
   fill: {
     fgColor: { rgb: '222a35' },
@@ -35,21 +42,23 @@ const CustomValueDescription = {
 };
 
 const CustomValue = {
-    font: {
-      sz: 10,
-    },
-    alignment: {
-      vertical: 'center',
-      horizontal: 'left',
-    },
-    commonBorderStyle,
-}
-  
+  font: {
+    sz: 9,
+    name: commonFontName,
+  },
+  alignment: {
+    vertical: 'center',
+    horizontal: 'left',
+  },
+  commonBorderStyle,
+};
+
 const TableHeader = {
   font: {
     bold: true,
     color: { rgb: 'ffffff' },
-    sz: 10,
+    sz: 9,
+    name: commonFontName,
   },
   fill: {
     fgColor: { rgb: '333f4f' },
@@ -61,9 +70,42 @@ const TableHeader = {
   commonBorderStyle,
 };
 
+const TableCell = {
+  font: {
+    sz: 9,
+    name: commonFontName,
+  },
+  fill: {
+    fgColor: { rgb: 'ffffff' },
+  },
+  alignment: {
+    vertical: 'center',
+    horizontal: 'center',
+  },
+  commonBorderStyle,
+};
+
+const TableCellAlternative = {
+  font: {
+    sz: 9,
+    name: commonFontName,
+  },
+  fill: {
+    fgColor: { rgb: 'd9e2f3' },
+  },
+  alignment: {
+    vertical: 'center',
+    horizontal: 'center',
+  },
+  commonBorderStyle,
+};
+
 export const CellStyles = {
-    Title,
-    CustomValueDescription,
-    CustomValue,
-    TableHeader
+  Clean,
+  Title,
+  CustomValueDescription,
+  CustomValue,
+  TableHeader,
+  TableCell,
+  TableCellAlternative,
 };

@@ -1,5 +1,5 @@
 import { CellObject, ExcelDataType } from 'xlsx-js-style/types';
-import { CellStyle } from './cell.styles';
+import { CellStyle, CellStyles } from './cell.styles';
 
 export class Cell {
   private readonly cell: CellObject;
@@ -23,7 +23,7 @@ export class Cell {
   }
 
   public setPredefinedStyle(s: CellStyle): Cell {
-    this.cell.s = s;
+    this.cell.s = CellStyles[s];
     return this;
   }
 

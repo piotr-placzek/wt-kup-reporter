@@ -1,5 +1,5 @@
-import { DailySummary } from 'src/data.interface';
-import { WakaTimeBranchSummary, WakaTimeDailySummary } from 'src/wakatime';
+import { DailySummary } from '../data.interface';
+import { WakaTimeBranchSummary, WakaTimeDailySummary } from '../wakatime';
 
 export function dailySummariesFactory(wakaTimeDailySummary: WakaTimeDailySummary): DailySummary {
   return {
