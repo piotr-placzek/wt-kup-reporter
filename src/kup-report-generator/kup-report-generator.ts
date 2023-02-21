@@ -12,22 +12,56 @@ export type KupReportBusinessPeriods = {
   monthly: number;
 };
 
+export type KupReportSummary = {
+  digital: number;
+  percentage: number;
+};
+
 export type KupReportGeneratorStrategy = {
   title: string;
   colsCnt: number;
   rowsCnt: number;
   generate: (summaries: DailySummary[]) => Array<XLSX.CellObject[]>;
+  hoursTotal: (summaries: DailySummary[], businessPeriods: KupReportBusinessPeriods) => KupReportSummary;
 };
 
 function reportDetails(title: string, employeeName: string, period: KupReportPeriod): XLSX.WorkSheet {
   return {
-    A1: new Cell('s').value,
     B1: new Cell('s').setPredefinedStyle('Title').setData(title).value,
     B2: new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Pracownik').value,
     C2: new Cell('s').setPredefinedStyle('CustomValue').setData(employeeName).value,
     B3: new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Okres').value,
     C3: new Cell('s').setPredefinedStyle('CustomValue').setData(`${period.month}/${period.year}`).value,
   };
+}
+
+function reportSummary(summary: KupReportSummary, colIndex: number, rowIndex: number): XLSX.WorkSheet {
+  const ws = {};
+  ws[
+    XLSX.utils.encode_cell({
+      c: colIndex,
+      r: rowIndex,
+    })
+  ] = new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Razem godzin').value;
+  ws[
+    XLSX.utils.encode_cell({
+      c: colIndex + 1,
+      r: rowIndex,
+    })
+  ] = new Cell('n').setPredefinedStyle('CustomValue').setNumberFormat('0.00').setData(summary.digital).value;
+  ws[
+    XLSX.utils.encode_cell({
+      c: colIndex,
+      r: rowIndex + 1,
+    })
+  ] = new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Procent godzin').value;
+  ws[
+    XLSX.utils.encode_cell({
+      c: colIndex + 1,
+      r: rowIndex + 1,
+    })
+  ] = new Cell('n').setPredefinedStyle('CustomValue').setNumberFormat('0.00%').setData(summary.percentage).value;
+  return ws;
 }
 
 function contentToSheetReduction(
@@ -57,9 +91,10 @@ function concatWorkSheets(sheets: XLSX.WorkSheet[]): XLSX.WorkSheet {
 
 function setupColsRowsAndRef(ws: XLSX.WorkSheet, rowsCnt: number): XLSX.WorkSheet {
   return {
+    A1: new Cell('s').value,
     ...ws,
     '!ref': 'A1:Z99', // @TODO get exactly range
-    '!rows': [{ hpt: 25 }, { hpt: 25 }, { hpt: 25 }, { hpt: 3 }, ...Array(rowsCnt).fill({ htp: 12 })],
+    '!rows': [{ hpt: 30 }, { hpt: 30 }, { hpt: 30 }, { hpt: 5 }, ...Array(rowsCnt).fill({ htp: 20 })],
     '!cols': [{ wch: 3 }, { wch: 15 }, { wch: 15 }, { wch: 45 }, { wch: 45 }],
   };
 }
@@ -73,14 +108,16 @@ export function generate(
 ): XLSX.WorkBook {
   const details = reportDetails(strategy.title, employeeName, period);
   const content = strategy.generate(summaries).reduce(contentToSheetReduction(4), {});
-  // @TODO generete report summatry under table
-  // @TODO add signatures placeholder
+  const hoursSummary = reportSummary(strategy.hoursTotal(summaries, businessPeriods), 1, strategy.rowsCnt + 4);
 
-  let ws = concatWorkSheets([details, content]);
+  let ws = concatWorkSheets([details, content, hoursSummary]);
   ws = setupColsRowsAndRef(ws, strategy.rowsCnt);
-  console.log(ws);
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws);
   return wb;
+}
+
+export function saveToFile(filePath: string, workbook: XLSX.WorkBook) {
+  XLSX.writeFile(workbook, `${filePath}.xlsx`, { cellStyles: true });
 }

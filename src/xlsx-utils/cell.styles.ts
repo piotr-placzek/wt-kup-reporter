@@ -2,13 +2,6 @@ export type CellStyle = keyof typeof CellStyles;
 
 const commonFontName = 'Century Gothic';
 
-const commonBorderStyle = {
-  left: { style: 'thin', color: { rgb: 'a5a5a5' } },
-  top: { style: 'thin', color: { rgb: 'a5a5a5' } },
-  right: { style: 'thin', color: { rgb: 'a5a5a5' } },
-  bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
-};
-
 const Clean = {};
 
 const Title = {
@@ -38,7 +31,12 @@ const CustomValueDescription = {
     vertical: 'center',
     horizontal: 'right',
   },
-  border: commonBorderStyle,
+  border: {
+    left: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    top: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    right: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
+  },
 };
 
 const CustomValue = {
@@ -48,9 +46,14 @@ const CustomValue = {
   },
   alignment: {
     vertical: 'center',
-    horizontal: 'left',
+    horizontal: 'center',
   },
-  commonBorderStyle,
+  border: {
+    left: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    top: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    right: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
+  },
 };
 
 const TableHeader = {
@@ -67,7 +70,12 @@ const TableHeader = {
     vertical: 'center',
     horizontal: 'center',
   },
-  commonBorderStyle,
+  border: {
+    left: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    top: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    right: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
+  },
 };
 
 const TableCell = {
@@ -82,7 +90,12 @@ const TableCell = {
     vertical: 'center',
     horizontal: 'center',
   },
-  commonBorderStyle,
+  border: {
+    left: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    top: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    right: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
+  },
 };
 
 const TableCellAlternative = {
@@ -97,7 +110,12 @@ const TableCellAlternative = {
     vertical: 'center',
     horizontal: 'center',
   },
-  commonBorderStyle,
+  border: {
+    left: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    top: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    right: { style: 'thin', color: { rgb: 'a5a5a5' } },
+    bottom: { style: 'thin', color: { rgb: 'a5a5a5' } },
+  },
 };
 
 export const CellStyles = {

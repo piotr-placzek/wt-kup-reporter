@@ -1,4 +1,4 @@
-import { KupReportGeneratorStrategy } from '../kup-report-generator';
+import { KupReportBusinessPeriods, KupReportGeneratorStrategy, KupReportSummary } from '../kup-report-generator';
 import { DailySummary, BranchSummary } from '../../data.interface';
 import * as XLSX from 'xlsx-js-style';
 import { Cell } from '../../xlsx-utils';
@@ -17,15 +17,17 @@ function fillTable(summaries: DailySummary[]): Array<XLSX.CellObject[]> {
   return summaries.map((dailySummary: DailySummary, i: number) => {
     const time = dailySummary.data.reduce((t: number, data: BranchSummary) => t + data.time, 0);
     const branches = dailySummary.data.reduce(
-      (b: string, data: BranchSummary) => (data.name !== 'Unknown' ? b + `${data.name}\n` : b),
+      (b: string, data: BranchSummary, i: number) =>
+        data.name !== 'Unknown' ? b + (i ? '\n' : '') + `${data.name}` : b,
       ''
     );
     const cellStyle: CellStyle = i % 2 ? 'TableCell' : 'TableCellAlternative';
     return [
       new Cell('s').setPredefinedStyle(cellStyle).setData(dailySummary.date).value,
       new Cell('n').setPredefinedStyle(cellStyle).setNumberFormat('0.00').setData(time).value,
-      new Cell('s').setPredefinedStyle(cellStyle).setData(branches).value,
-      new Cell('s').setPredefinedStyle(cellStyle).value,
+      new Cell('s').setPredefinedStyle(cellStyle).setHorizontalAlignment('left').setData(branches).value,
+      new Cell('s').setPredefinedStyle(cellStyle).setHorizontalAlignment('left').setVerticalAlignment('top').setData('')
+        .value,
     ];
   });
 }
@@ -34,9 +36,21 @@ function generate(summaries: DailySummary[]): Array<XLSX.CellObject[]> {
   return [setupTable(), ...fillTable(summaries)];
 }
 
+function hoursTotal(summaries: DailySummary[], businessPeriods: KupReportBusinessPeriods): KupReportSummary {
+  const digital = summaries.reduce(
+    (t: number, summary: DailySummary) => t + summary.data.reduce((t: number, data: BranchSummary) => t + data.time, 0),
+    0
+  );
+  return {
+    digital,
+    percentage: digital / businessPeriods.monthly,
+  };
+}
+
 export const monthlyKupGeneratorStrategy: KupReportGeneratorStrategy = {
   title: 'Miesięczny raport - KUP',
   colsCnt: 4,
   rowsCnt: 32,
   generate,
+  hoursTotal,
 };

@@ -9,12 +9,12 @@ import { endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
-  // .option('working-hours', {
-  //   alias: 't',
-  //   type: 'number',
-  //   describe: 'Total amount of working hours',
-  //   required: true,
-  // })
+  .option('working-hours', {
+    alias: 't',
+    type: 'number',
+    describe: 'Total amount of working hours',
+    required: true,
+  })
   .option('month', {
     alias: 'm',
     type: 'number',
@@ -39,20 +39,29 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const { year, month, } = args;
+  const { year, month } = args;
   const range = getRange(year, month);
-  console.log(range);
+  const filePath = `./reports/KUP-report-m${month}-y${year}-${Date.now()}`;
 
-  // const client = new WakatimeClient(WAKATIME_API_KEY);
+  console.log(range);
+  console.log(filePath);
+
   try {
-    // const wtSummaries: WakaTimeDailySummary[] = await client.getCurrentUserSummaries(
-    //   PROJECT_NAME,
-    //   range.start,
-    //   range.end
-    // );
-    // const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    const data = kupReportGenerator.generate('name', { month: 3, year: 1991 }, { daily: 8, monthly: 20 * 8 }, [], monthlyKupGeneratorStrategy);
-    XLSX.writeFile(data, './tets.xlsx', { cellStyles: true, WTF: true });
+    const client = new WakatimeClient(WAKATIME_API_KEY);
+    const wtSummaries: WakaTimeDailySummary[] = await client.getCurrentUserSummaries(
+      PROJECT_NAME,
+      range.start,
+      range.end
+    );
+    const monthlySummaries = monthlySummariesFactory(wtSummaries);
+    const data = kupReportGenerator.generate(
+      EMPLOYEE_NAME,
+      { month, year },
+      { daily: 8, monthly: args.t },
+      monthlySummaries,
+      monthlyKupGeneratorStrategy
+    );
+    kupReportGenerator.saveToFile(filePath, data);
   } catch (error) {
     console.error(error);
   }

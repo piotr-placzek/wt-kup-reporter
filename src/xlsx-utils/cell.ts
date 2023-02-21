@@ -46,7 +46,7 @@ export class Cell {
     return this;
   }
 
-  public setVerticalAlignment(va: 'left' | 'center' | 'right'): Cell {
+  public setVerticalAlignment(va: 'top' | 'center' | 'bottom'): Cell {
     this.cell.s = {
       ...this.cell.s,
       alignment: {
