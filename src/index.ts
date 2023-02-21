@@ -1,9 +1,10 @@
-import { argv } from 'process';
+import * as XLSX from 'xlsx-js-style';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { EMPLOYEE_NAME, PROJECT_NAME, WAKATIME_API_KEY } from './config';
 import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
-import { generateMonthlyKupReport } from './kup-report-generator';
+import { monthlyKupGeneratorStrategy } from './kup-report-generator';
+import * as kupReportGenerator from './kup-report-generator/kup-report-generator';
 import { endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
@@ -38,19 +39,29 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const { year, month, t } = args;
+  const { year, month } = args;
   const range = getRange(year, month);
-  console.log(range);
+  const filePath = `./reports/KUP-report-m${month}-y${year}-${Date.now()}`;
 
-  const client = new WakatimeClient(WAKATIME_API_KEY);
+  console.log(range);
+  console.log(filePath);
+
   try {
+    const client = new WakatimeClient(WAKATIME_API_KEY);
     const wtSummaries: WakaTimeDailySummary[] = await client.getCurrentUserSummaries(
       PROJECT_NAME,
       range.start,
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
-    generateMonthlyKupReport(EMPLOYEE_NAME, { year, month }, t, monthlySummaries, `M${args.month}`, './reports/');
+    const data = kupReportGenerator.generate(
+      EMPLOYEE_NAME,
+      { month, year },
+      { daily: 8, monthly: args.t },
+      monthlySummaries,
+      monthlyKupGeneratorStrategy
+    );
+    kupReportGenerator.saveToFile(filePath, data);
   } catch (error) {
     console.error(error);
   }
