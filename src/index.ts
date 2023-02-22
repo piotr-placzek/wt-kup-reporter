@@ -1,20 +1,14 @@
 import * as XLSX from 'xlsx-js-style';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { EMPLOYEE_NAME, PROJECT_NAME, WAKATIME_API_KEY } from './config';
+import { EMPLOYEE_NAME, HOURS_PER_DAY, PROJECT_NAME, WAKATIME_API_KEY } from './config';
 import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { monthlyKupGeneratorStrategy } from './kup-report-generator';
 import * as kupReportGenerator from './kup-report-generator/kup-report-generator';
-import { endOfMonth, startOfMonth } from './utils';
+import { businessHoursPerMonth, endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
-  .option('working-hours', {
-    alias: 't',
-    type: 'number',
-    describe: 'Total amount of working hours',
-    required: true,
-  })
   .option('month', {
     alias: 'm',
     type: 'number',
@@ -57,7 +51,7 @@ async function main(): Promise<void> {
     const data = kupReportGenerator.generate(
       EMPLOYEE_NAME,
       { month, year },
-      { daily: 8, monthly: args.t },
+      { daily: HOURS_PER_DAY, monthly: businessHoursPerMonth(year, month) },
       monthlySummaries,
       monthlyKupGeneratorStrategy
     );

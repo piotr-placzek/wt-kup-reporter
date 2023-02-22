@@ -9,6 +9,5 @@
 Options:
 | Flag | Description | Type | Required | Default |
 |---|---|---|---|---|
-| -t, --working-hours | Total amount of working hours | [number] | [required] | |
-| -m, --month | Set month [1-indexed] | [number] | | [default: 2] |
-| -y, --year | Set year | [number] | | [default: 2023] |
+| -m, --month | Set month [1-indexed] | [number] | | [default: current] |
+| -y, --year | Set year | [number] | | [default: current] |
