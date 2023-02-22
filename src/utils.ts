@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon-business-days';
 import { Interval } from 'luxon';
 import { TIMEZONE, BUSINESS_DAYS, HOURS_PER_DAY } from './config';
+import { holidayMatchers } from './holiday-matchers';
 
 export function startOfMonth(year: number, month: number): Date {
   return DateTime.utc(year, month).setZone(TIMEZONE).startOf('month').toJSDate();
@@ -20,14 +21,17 @@ export function getCurrentTimestamp(): string {
 
 export function businessHoursPerMonth(year: number, month: number): number {
   const dt = DateTime.utc(year, month).setZone(TIMEZONE);
-  dt.setupBusiness({ businessDays: BUSINESS_DAYS });
+  dt.setupBusiness({
+    businessDays: BUSINESS_DAYS,
+    holidayMatchers,
+  });
 
   const interval = Interval.fromDateTimes(dt.startOf('month'), dt.endOf('month'));
 
   let cnt = 0;
   let i = interval.start;
   while (i < interval.end) {
-    if (i.isBusinessDay()) {
+    if (i.isBusinessDay() || !i.isHoliday()) {
       cnt++;
     }
 

@@ -1,4 +1,3 @@
-import * as XLSX from 'xlsx-js-style';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { EMPLOYEE_NAME, HOURS_PER_DAY, PROJECT_NAME, WAKATIME_API_KEY } from './config';
