@@ -8,6 +8,13 @@ import { businessHoursPerMonth, endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
+  .option('furlough', {
+    alias: 'f',
+    type: 'number',
+    describe: 'Furlough days',
+    required: false,
+    default: 0,
+  })
   .option('month', {
     alias: 'm',
     type: 'number',
@@ -47,10 +54,11 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
+    const furloughHours = args.f * HOURS_PER_DAY;
     const data = kupReportGenerator.generate(
       EMPLOYEE_NAME,
       { month, year },
-      { daily: HOURS_PER_DAY, monthly: businessHoursPerMonth(year, month) },
+      { daily: HOURS_PER_DAY, monthly: businessHoursPerMonth(year, month) - furloughHours },
       monthlySummaries,
       monthlyKupGeneratorStrategy
     );
