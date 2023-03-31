@@ -1,4 +1,4 @@
-import { MonthlyReportModel, ReportRowModel } from 'src/data.interface';
+import { MonthlyReportModel, ReportRowModel } from '../data.interface';
 import { dailySummariesToJson } from './daily-summaries-to-json.factory';
 import { MonthlySummary } from './monthly-summaries.factory';
 

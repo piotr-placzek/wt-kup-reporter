@@ -1,4 +1,4 @@
-import { BranchSummary, DailySummary, ReportRowModel } from 'src/data.interface';
+import { BranchSummary, DailySummary, ReportRowModel } from '../data.interface';
 
 const IGNORED_BRANCHES = ['Unknown', 'master', 'main'];
 
