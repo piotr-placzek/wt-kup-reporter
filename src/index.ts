@@ -1,19 +1,19 @@
-import * as XLSX from 'xlsx-js-style';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { EMPLOYEE_NAME, PROJECT_NAME, WAKATIME_API_KEY } from './config';
+import { EMPLOYEE_NAME, HOURS_PER_DAY, PROJECT_NAME, WAKATIME_API_KEY } from './config';
 import { monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { monthlyKupGeneratorStrategy } from './kup-report-generator';
 import * as kupReportGenerator from './kup-report-generator/kup-report-generator';
-import { endOfMonth, startOfMonth } from './utils';
+import { businessHoursPerMonth, endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
-  .option('working-hours', {
-    alias: 't',
+  .option('furlough', {
+    alias: 'f',
     type: 'number',
-    describe: 'Total amount of working hours',
-    required: true,
+    describe: 'Furlough days',
+    required: false,
+    default: 0,
   })
   .option('month', {
     alias: 'm',
@@ -54,10 +54,11 @@ async function main(): Promise<void> {
       range.end
     );
     const monthlySummaries = monthlySummariesFactory(wtSummaries);
+    const furloughHours = args.f * HOURS_PER_DAY;
     const data = kupReportGenerator.generate(
       EMPLOYEE_NAME,
       { month, year },
-      { daily: 8, monthly: args.t },
+      { daily: HOURS_PER_DAY, monthly: businessHoursPerMonth(year, month) - furloughHours },
       monthlySummaries,
       monthlyKupGeneratorStrategy
     );
