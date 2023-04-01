@@ -59,7 +59,7 @@ function reportContent(data: MonthlyReportModel): XLSX.WorkSheet {
 
 function reportSummary(totalTimeSpent: number, business: BusinessPeriod): XLSX.WorkSheet {
   const percentageTimeSpentValue =
-    (totalTimeSpent / (business.businessDays - business.furloughDays)) * business.hoursPerDay;
+    totalTimeSpent / ((business.businessDays - business.furloughDays) * business.hoursPerDay);
 
   return {
     B39: new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Razem godzin').value,

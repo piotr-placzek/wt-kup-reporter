@@ -5,7 +5,7 @@ import { MonthlyReportModel, ReportDetails } from './data.interface';
 import { monthlySummariesToJson } from './factory/monthly-summaries-to-json.factory';
 import { monthlySummariesFactory, MonthlySummary } from './factory/monthly-summaries.factory';
 import { generate, strategy } from './report-generator';
-import { businessHoursPerMonth, endOfMonth, startOfMonth } from './utils';
+import { businessDaysPerMonth, endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
@@ -63,7 +63,7 @@ async function main(): Promise<void> {
       },
       business: {
         hoursPerDay: config.HOURS_PER_DAY,
-        businessDays: businessHoursPerMonth(year, month),
+        businessDays: businessDaysPerMonth(year, month),
         furloughDays: furlough,
       },
     };
