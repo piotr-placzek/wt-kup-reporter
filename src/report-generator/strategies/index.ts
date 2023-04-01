@@ -1,8 +1,10 @@
 import { MonthlyReportModel, ReportDetails } from '../../data.interface';
-import { xlsx_ReportGeneratorStrategy } from './xlsx';
+import { console_ReportGeneratorStrategy } from './console/console.strategy';
+import { xlsx_ReportGeneratorStrategy } from './xlsx/xlsx.strategy';
 
 export type GeneratorStrategy = (details: ReportDetails, data: MonthlyReportModel) => void;
 
 export const strategy = {
-  XLSX: xlsx_ReportGeneratorStrategy,
+  xlsx: xlsx_ReportGeneratorStrategy,
+  console: console_ReportGeneratorStrategy,
 };

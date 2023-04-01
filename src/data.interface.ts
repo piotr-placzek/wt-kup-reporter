@@ -32,6 +32,7 @@ export interface BusinessPeriod {
 
 export interface ReportDetails {
   employee: string;
+  project: string;
   period: ReportPeriod;
   business: BusinessPeriod;
 }

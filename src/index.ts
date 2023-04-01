@@ -30,6 +30,20 @@ const args = yargs(hideBin(process.argv))
     required: false,
     default: new Date(Date.now()).getFullYear(),
   })
+  .option('output', {
+    alias: 'o',
+    type: 'enum',
+    describe: 'report output format',
+    required: false,
+    default: 'xlsx',
+  })
+  .option('actual-period', {
+    alias: 'ap',
+    type: 'boolean',
+    describe: 'report output format',
+    required: false,
+    default: false,
+  })
   .help('h').argv;
 
 function getRange(year: number, month: number): { start: Date; end: Date } {
@@ -40,9 +54,8 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const { year, month, furlough } = args;
+  const { year, month, furlough, output, ap: actualPeriod } = args;
   const range = getRange(year, month);
-  console.log(range);
 
   try {
     const client = new WakatimeClient(config.WAKATIME_API_KEY);
@@ -57,18 +70,21 @@ async function main(): Promise<void> {
     const reportData: MonthlyReportModel = monthlySummariesToJson(monthlySummaries);
     const reportDetails: ReportDetails = {
       employee: config.EMPLOYEE_NAME,
+      project: config.PROJECT_NAME,
       period: {
         month,
         year,
       },
       business: {
         hoursPerDay: config.HOURS_PER_DAY,
-        businessDays: businessDaysPerMonth(year, month),
+        businessDays: businessDaysPerMonth(year, month, actualPeriod),
         furloughDays: furlough,
       },
     };
 
-    generate(reportDetails, reportData, strategy.XLSX);
+    const selectedStrategy = Object.keys(strategy).includes(output) ? strategy[output] : strategy.xlsx;
+
+    generate(reportDetails, reportData, selectedStrategy);
   } catch (error) {
     console.error(error);
   }
