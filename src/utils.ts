@@ -32,7 +32,7 @@ export function businessDaysPerMonth(year: number, month: number, actualPeriod =
 
   let cnt = 0;
   let i = interval.start;
-  while (i < interval.end) {
+  while (i <= interval.end) {
     if (i.isBusinessDay() && !i.isHoliday()) {
       cnt++;
     }

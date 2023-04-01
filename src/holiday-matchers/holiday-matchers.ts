@@ -12,7 +12,8 @@ export function isChristmasDay(dt: DateTime): boolean {
 }
 
 export function isWetMonday(dt: DateTime): boolean {
-  const [day, month] = dt.availableHolidayHelpers.getEasterMonthAndDay(dt.year);
+  const [month, day
+  ] = dt.availableHolidayHelpers.getEasterMonthAndDay(dt.year);
   const wetMonday = DateTime.fromObject({ month, day: day + 1 });
   return +dt === +wetMonday;
 }
