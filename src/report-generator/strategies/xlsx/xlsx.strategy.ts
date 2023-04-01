@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx-js-style';
 import { REPORTS_STORAGE_PATH } from '../../../config';
 import { BusinessPeriod, MonthlyReportModel, ReportDetails, ReportRowModel } from '../../../data.interface';
+import { spentToTotalTimeRatio } from '../../../utils';
 import { Cell, mergeWorkSheets } from './xlsx-utils';
 import { CellStyle } from './xlsx-utils/cell.styles';
 
@@ -62,8 +63,7 @@ function reportContent(data: MonthlyReportModel): XLSX.WorkSheet {
 }
 
 function reportSummary(totalTimeSpent: number, business: BusinessPeriod): XLSX.WorkSheet {
-  const percentageTimeSpentValue =
-    totalTimeSpent / ((business.businessDays - business.furloughDays) * business.hoursPerDay);
+  const percentageTimeSpentValue = spentToTotalTimeRatio(totalTimeSpent, business);
 
   return {
     B39: new Cell('s').setPredefinedStyle('CustomValueDescription').setData('Razem godzin').value,

@@ -1,6 +1,7 @@
 import { Interval } from 'luxon';
 import { DateTime } from 'luxon-business-days';
 import { BUSINESS_DAYS, TIMEZONE } from './config';
+import { BusinessPeriod } from './data.interface';
 import { holidayMatchers } from './holiday-matchers';
 
 export function startOfMonth(year: number, month: number): Date {
@@ -39,4 +40,8 @@ export function businessDaysPerMonth(year: number, month: number): number {
   }
 
   return cnt;
+}
+
+export function spentToTotalTimeRatio(totalTimeSpent: number, business: BusinessPeriod) {
+  return totalTimeSpent / ((business.businessDays - business.furloughDays) * business.hoursPerDay);
 }
