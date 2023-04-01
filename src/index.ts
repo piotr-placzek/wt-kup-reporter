@@ -4,8 +4,6 @@ import * as config from './config';
 import { MonthlyReportModel, ReportDetails } from './data.interface';
 import { monthlySummariesToJson } from './factory/monthly-summaries-to-json.factory';
 import { monthlySummariesFactory, MonthlySummary } from './factory/monthly-summaries.factory';
-import { monthlyKupGeneratorStrategy } from './kup-report-generator';
-import * as kupReportGenerator from './kup-report-generator/kup-report-generator';
 import { generate, strategy } from './report-generator';
 import { businessHoursPerMonth, endOfMonth, startOfMonth } from './utils';
 import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
@@ -44,10 +42,7 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 async function main(): Promise<void> {
   const { year, month, furlough } = args;
   const range = getRange(year, month);
-  // const filePath = `./reports/KUP-report-m${month}-y${year}-${Date.now()}`;
-
   console.log(range);
-  // console.log(filePath);
 
   try {
     const client = new WakatimeClient(config.WAKATIME_API_KEY);
@@ -68,22 +63,12 @@ async function main(): Promise<void> {
       },
       business: {
         hoursPerDay: config.HOURS_PER_DAY,
-        businessDays: 0,
+        businessDays: businessHoursPerMonth(year, month),
         furloughDays: furlough,
       },
     };
 
     generate(reportDetails, reportData, strategy.XLSX);
-
-    // const furloughHours = args.f * HOURS_PER_DAY;
-    // const data = kupReportGenerator.generate(
-    //   EMPLOYEE_NAME,
-    //   { month, year },
-    //   { daily: HOURS_PER_DAY, monthly: businessHoursPerMonth(year, month) - furloughHours },
-    //   monthlySummaries,
-    //   monthlyKupGeneratorStrategy
-    // );
-    // kupReportGenerator.saveToFile(filePath, data);
   } catch (error) {
     console.error(error);
   }

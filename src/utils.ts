@@ -1,6 +1,6 @@
-import { DateTime } from 'luxon-business-days';
 import { Interval } from 'luxon';
-import { TIMEZONE, BUSINESS_DAYS, HOURS_PER_DAY } from './config';
+import { DateTime } from 'luxon-business-days';
+import { BUSINESS_DAYS, HOURS_PER_DAY, TIMEZONE } from './config';
 import { holidayMatchers } from './holiday-matchers';
 
 export function startOfMonth(year: number, month: number): Date {
