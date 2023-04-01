@@ -51,7 +51,11 @@ function reportContent(data: MonthlyReportModel): XLSX.WorkSheet {
       .setNumberFormat('0.00')
       .setData(curr.time).value;
 
-    acc[cellAddress.tasks] = new Cell('s').setPredefinedStyle(cellStyle).setData(curr.branches.join('\n')).value;
+    acc[cellAddress.tasks] = new Cell('s')
+      .setPredefinedStyle(cellStyle)
+      .setHorizontalAlignment('left')
+      .setVerticalAlignment('top')
+      .setData(curr.branches.join('\n')).value;
 
     return acc;
   }, table);
@@ -74,9 +78,9 @@ function setupColsRowsAndRef(ws: XLSX.WorkSheet): XLSX.WorkSheet {
   return {
     A1: new Cell('s').value,
     ...ws,
-    '!ref': 'A1:Z99', // @TODO get exactly range
+    '!ref': 'A1:D40',
     '!rows': [{ hpt: 30 }, { hpt: 30 }, { hpt: 30 }, { hpt: 5 }, ...Array(32).fill({ htp: 20 })],
-    '!cols': [{ wch: 3 }, { wch: 15 }, { wch: 15 }, { wch: 45 }, { wch: 45 }],
+    '!cols': [{ wch: 3 }, { wch: 13 }, { wch: 13 }, { wch: 50 }],
   };
 }
 
