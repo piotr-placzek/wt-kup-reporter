@@ -37,6 +37,13 @@ const args = yargs(hideBin(process.argv))
     required: false,
     default: 'xlsx',
   })
+  .option('actual-period', {
+    alias: 'ap',
+    type: 'boolean',
+    describe: 'report output format',
+    required: false,
+    default: false,
+  })
   .help('h').argv;
 
 function getRange(year: number, month: number): { start: Date; end: Date } {
@@ -47,7 +54,7 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const { year, month, furlough, output } = args;
+  const { year, month, furlough, output, ap: actualPeriod } = args;
   const range = getRange(year, month);
 
   try {
@@ -70,7 +77,7 @@ async function main(): Promise<void> {
       },
       business: {
         hoursPerDay: config.HOURS_PER_DAY,
-        businessDays: businessDaysPerMonth(year, month),
+        businessDays: businessDaysPerMonth(year, month, actualPeriod),
         furloughDays: furlough,
       },
     };

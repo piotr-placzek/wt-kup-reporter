@@ -20,14 +20,15 @@ export function getCurrentTimestamp(): string {
   return DateTime.local().setZone(TIMEZONE).valueOf();
 }
 
-export function businessDaysPerMonth(year: number, month: number): number {
-  const dt = DateTime.utc(year, month).setZone(TIMEZONE);
+export function businessDaysPerMonth(year: number, month: number, actualPeriod = false): number {
+  const dt = actualPeriod ? DateTime.utc().setZone(TIMEZONE) : DateTime.utc(year, month).setZone(TIMEZONE);
+
   dt.setupBusiness({
     businessDays: BUSINESS_DAYS,
     holidayMatchers,
   });
 
-  const interval = Interval.fromDateTimes(dt.startOf('month'), dt.endOf('month'));
+  const interval = Interval.fromDateTimes(dt.startOf('month'), dt.endOf(actualPeriod ? 'day' : 'month'));
 
   let cnt = 0;
   let i = interval.start;
