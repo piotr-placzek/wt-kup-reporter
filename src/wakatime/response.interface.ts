@@ -1,3 +1,7 @@
+export interface EnrichedWakaTimeDailySummary extends WakaTimeDailySummary {
+  project: string;
+}
+
 export interface WakaTimeDailySummary {
   branches: WakaTimeBranchSummary[];
   //   categories: unknown[];

@@ -23,6 +23,13 @@ export class WakatimeClient {
           project,
         },
       })
-      .then((r) => JSON.parse(r.data).data);
+      .then((r) => {
+        const data = JSON.parse(r.data);
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        return data.data;
+      });
+    // .then(data => ({ ...data, project }));
   }
 }

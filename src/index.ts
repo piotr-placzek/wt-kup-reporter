@@ -60,17 +60,17 @@ async function main(): Promise<void> {
   try {
     const client = new WakatimeClient(config.WAKATIME_API_KEY);
 
-    const wtSummaries: WakaTimeDailySummary[] = await client.getCurrentUserSummaries(
-      config.PROJECT_NAME,
-      range.start,
-      range.end
-    );
+    let wtSummaries: WakaTimeDailySummary[] = [];
+    for (const project of config.PROJECTS) {
+      wtSummaries = wtSummaries.concat(await client.getCurrentUserSummaries(project, range.start, range.end));
+    }
+
     const monthlySummaries: MonthlySummary = monthlySummariesFactory(wtSummaries);
 
     const reportData: MonthlyReportModel = monthlySummariesToJson(monthlySummaries);
     const reportDetails: ReportDetails = {
       employee: config.EMPLOYEE_NAME,
-      project: config.PROJECT_NAME,
+      project: config.PROJECTS.join(', '),
       period: {
         month,
         year,
