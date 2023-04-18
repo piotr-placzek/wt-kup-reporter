@@ -7,7 +7,7 @@ import { monthlySummariesToJson } from './factory/monthly-summaries-to-json.fact
 import { MonthlySummary, monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { generate, strategy } from './report-generator';
 import { businessDaysPerMonth, endOfMonth, startOfMonth } from './utils';
-import { AllActivityJsonProcessor, WakaTimeDailySummary, WakatimeClient } from './wakatime';
+import { WakaTimeAllDailyTotalsActivityJsonProcessor, WakaTimeDailySummary, WakatimeClient } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
   .option('furlough', {
@@ -76,7 +76,12 @@ async function main(): Promise<void> {
       const fcAsObject = JSON.parse(fileContent);
 
       wtSummaries.push(
-        ...new AllActivityJsonProcessor().process(config.PROJECTS, range.start, range.end, fcAsObject)
+        ...new WakaTimeAllDailyTotalsActivityJsonProcessor().process(
+          config.PROJECTS,
+          range.start,
+          range.end,
+          fcAsObject
+        )
       );
     } else {
       const client = new WakatimeClient(config.WAKATIME_API_KEY);

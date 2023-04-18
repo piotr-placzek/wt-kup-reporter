@@ -1,1 +1,1 @@
-export * from './all-activity-json.processor';
+export * from './all-daily-totals-activity-json.processor';

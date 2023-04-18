@@ -6,7 +6,7 @@ import {
   WakaTimeSimpleRange,
 } from '../response.interface';
 
-export class AllActivityJsonProcessor {
+export class WakaTimeAllDailyTotalsActivityJsonProcessor {
   process(projects: string[], start: Date, end: Date, json: WakaTimeAllActivityJson): WakaTimeDailySummary[] {
     const range: WakaTimeSimpleRange = this.getValidRange(json.range, start, end);
     return json.days
