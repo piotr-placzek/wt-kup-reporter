@@ -16,12 +16,12 @@ export class AllActivityJsonProcessor {
   }
 
   private validateRange(dataRange: WakaTimeSimpleRange, start: Date, end: Date): boolean {
-    const startValue = start.getTime();
-    const endValue = end.getTime();
+    const startValue = Math.floor(start.getTime() / 1000);
+    const endValue = Math.floor(end.getTime() / 1000);
 
     const valueIsInRange = (value: number): boolean => value >= dataRange.start && value <= dataRange.end;
 
-    return startValue > endValue && valueIsInRange(startValue) && valueIsInRange(endValue);
+    return startValue < endValue && valueIsInRange(startValue) && valueIsInRange(endValue);
   }
 
   private rangeFilter(start: Date, end: Date): (e: WakaTimeDailyActivityJson) => boolean {
