@@ -1,12 +1,13 @@
+import * as fs from 'fs-extra';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import * as config from './config';
 import { MonthlyReportModel, ReportDetails } from './data.interface';
 import { monthlySummariesToJson } from './factory/monthly-summaries-to-json.factory';
-import { monthlySummariesFactory, MonthlySummary } from './factory/monthly-summaries.factory';
+import { MonthlySummary, monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { generate, strategy } from './report-generator';
 import { businessDaysPerMonth, endOfMonth, startOfMonth } from './utils';
-import { WakatimeClient, WakaTimeDailySummary } from './wakatime';
+import { AllActivityJsonProcessor, WakaTimeDailySummary, WakatimeClient } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
   .option('furlough', {
@@ -44,6 +45,12 @@ const args = yargs(hideBin(process.argv))
     required: false,
     default: false,
   })
+  .option('file', {
+    alias: 'p',
+    type: 'string',
+    describe: 'use data exported from wakatime',
+    required: false,
+  })
   .help('h').argv;
 
 function getRange(year: number, month: number): { start: Date; end: Date } {
@@ -54,15 +61,28 @@ function getRange(year: number, month: number): { start: Date; end: Date } {
 }
 
 async function main(): Promise<void> {
-  const { year, month, furlough, output, ap: actualPeriod } = args;
+  const { year, month, furlough, output, ap: actualPeriod, file } = args;
   const range = getRange(year, month);
 
   try {
-    const client = new WakatimeClient(config.WAKATIME_API_KEY);
+    const wtSummaries: WakaTimeDailySummary[] = [];
 
-    let wtSummaries: WakaTimeDailySummary[] = [];
-    for (const project of config.PROJECTS) {
-      wtSummaries = wtSummaries.concat(await client.getCurrentUserSummaries(project, range.start, range.end));
+    if (file) {
+      if (!(await fs.pathExists(file))) {
+        throw new Error('File does not exist');
+      }
+
+      const fileContent = await fs.readFile(file);
+      const fcAsObject = JSON.parse(fileContent);
+
+      wtSummaries.push(
+        ...new AllActivityJsonProcessor().process(config.PROJECTS, range.start, range.end, fcAsObject)
+      );
+    } else {
+      const client = new WakatimeClient(config.WAKATIME_API_KEY);
+      for (const project of config.PROJECTS) {
+        wtSummaries.push(...(await client.getCurrentUserSummaries(project, range.start, range.end)));
+      }
     }
 
     const monthlySummaries: MonthlySummary = monthlySummariesFactory(wtSummaries);
