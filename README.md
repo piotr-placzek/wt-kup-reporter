@@ -25,8 +25,8 @@ Available output values:
 - xlsx (default)
 - console
 
-
 ### JSON as input
+
 To get all activities from WakaTime as JSON file:
 
-- WakaTime Dashboard -> Account Settings -> Export
+- WakaTime Dashboard -> Account Settings -> Export -> Daily totals (for analysis, but NOT for backups)
