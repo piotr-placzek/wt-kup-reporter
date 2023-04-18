@@ -8,26 +8,30 @@ import {
 
 export class AllActivityJsonProcessor {
   process(projects: string[], start: Date, end: Date, json: WakaTimeAllActivityJson): WakaTimeDailySummary[] {
-    if (!this.validateRange(json.range, start, end)) {
-      throw new Error('Missing data for given range or range is invalid (start>end)');
+    const range: WakaTimeSimpleRange = this.getValidRange(json.range, start, end);
+    return json.days
+      .filter(this.rangeFilter(range.start, range.end))
+      .reduce(this.dailyActivitiesReduceByProjects(projects), []);
+  }
+
+  private getValidRange(dataRange: WakaTimeSimpleRange, start: Date, end: Date): WakaTimeSimpleRange {
+    const startValue = this.getSeconds(start);
+    const endValue = this.getSeconds(end);
+
+    if (startValue > endValue) {
+      throw new Error('Invalid range');
     }
 
-    return json.days.filter(this.rangeFilter(start, end)).reduce(this.dailyActivitiesReduceByProjects(projects), []);
+    return {
+      start: startValue < dataRange.start ? dataRange.start : startValue,
+      end: endValue > dataRange.end ? dataRange.end : endValue,
+    };
   }
 
-  private validateRange(dataRange: WakaTimeSimpleRange, start: Date, end: Date): boolean {
-    const startValue = Math.floor(start.getTime() / 1000);
-    const endValue = Math.floor(end.getTime() / 1000);
-
-    const valueIsInRange = (value: number): boolean => value >= dataRange.start && value <= dataRange.end;
-
-    return startValue < endValue && valueIsInRange(startValue) && valueIsInRange(endValue);
-  }
-
-  private rangeFilter(start: Date, end: Date): (e: WakaTimeDailyActivityJson) => boolean {
+  private rangeFilter(start: number, end: number): (e: WakaTimeDailyActivityJson) => boolean {
     return (element: WakaTimeDailyActivityJson): boolean => {
-      const dateTime = new Date(element.date).getTime();
-      return dateTime >= start.getTime() && dateTime <= end.getTime();
+      const dateTime = this.getSeconds(new Date(element.date));
+      return dateTime >= start && dateTime <= end;
     };
   }
 
@@ -49,5 +53,9 @@ export class AllActivityJsonProcessor {
       ...dailyActivity,
       range: { date, start: '', end: '', timezone: '', text: '' },
     });
+  }
+
+  private getSeconds(date: Date): number {
+    return Math.floor(date.getTime() / 1000);
   }
 }
