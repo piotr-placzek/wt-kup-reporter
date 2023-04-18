@@ -1,5 +1,5 @@
 export interface EnrichedWakaTimeDailySummary extends WakaTimeDailySummary {
-  project: string;
+  name: string;
 }
 
 export interface WakaTimeDailySummary {
@@ -42,4 +42,20 @@ export interface WakaTimeSummaryRange {
   start: string;
   text: string;
   timezone: string;
+}
+
+export interface WakaTimeSimpleRange {
+  start: number;
+  end: number;
+}
+export interface WakaTimeDailyActivityJson {
+  date: string;
+  grand_total: WakaTimeGrandTotal;
+  projects: EnrichedWakaTimeDailySummary[];
+}
+
+export interface WakaTimeAllActivityJson {
+  user: unknown;
+  range: WakaTimeSimpleRange;
+  days: WakaTimeDailyActivityJson[];
 }
