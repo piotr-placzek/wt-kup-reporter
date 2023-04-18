@@ -18,7 +18,7 @@ export class WakaTimeAllDailyTotalsActivityJsonProcessor {
     const startValue = this.getSeconds(start);
     const endValue = this.getSeconds(end);
 
-    if (startValue > endValue) {
+    if (startValue > endValue || startValue > dataRange.end || endValue < dataRange.start) {
       throw new Error('Invalid range');
     }
 
