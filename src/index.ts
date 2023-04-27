@@ -6,7 +6,7 @@ import { MonthlyReportModel, ReportDetails } from './data.interface';
 import { monthlySummariesToJson } from './factory/monthly-summaries-to-json.factory';
 import { MonthlySummary, monthlySummariesFactory } from './factory/monthly-summaries.factory';
 import { generate, strategy } from './report-generator';
-import { businessDaysPerMonth, endOfMonth, startOfMonth } from './utils';
+import { businessDaysPerMonth, concatWakatimeMultiProjectSummariesByDate, endOfMonth, startOfMonth } from './utils';
 import { WakaTimeAllDailyTotalsActivityJsonProcessor, WakaTimeDailySummary, WakatimeClient } from './wakatime';
 
 const args = yargs(hideBin(process.argv))
@@ -90,7 +90,9 @@ async function main(): Promise<void> {
       }
     }
 
-    const monthlySummaries: MonthlySummary = monthlySummariesFactory(wtSummaries);
+    const wtSummariesOrganizedByDate = concatWakatimeMultiProjectSummariesByDate(wtSummaries);
+
+    const monthlySummaries: MonthlySummary = monthlySummariesFactory(wtSummariesOrganizedByDate);
 
     const reportData: MonthlyReportModel = monthlySummariesToJson(monthlySummaries);
     const reportDetails: ReportDetails = {

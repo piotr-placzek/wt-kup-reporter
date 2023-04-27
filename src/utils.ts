@@ -3,6 +3,7 @@ import { DateTime } from 'luxon-business-days';
 import { BUSINESS_DAYS, TIMEZONE } from './config';
 import { BusinessPeriod } from './data.interface';
 import { holidayMatchers } from './holiday-matchers';
+import { WakaTimeDailySummary } from './wakatime';
 
 export function startOfMonth(year: number, month: number): Date {
   return DateTime.utc(year, month).setZone(TIMEZONE).startOf('month').toJSDate();
@@ -45,4 +46,21 @@ export function businessDaysPerMonth(year: number, month: number, actualPeriod =
 
 export function spentToTotalTimeRatio(totalTimeSpent: number, business: BusinessPeriod) {
   return totalTimeSpent / ((business.businessDays - business.furloughDays) * business.hoursPerDay);
+}
+
+export function concatWakatimeMultiProjectSummariesByDate(wtSummaries: WakaTimeDailySummary[]) {
+  const map = new Map<string, WakaTimeDailySummary>();
+
+  wtSummaries.forEach((wtSummary: WakaTimeDailySummary) => {
+    const { date } = wtSummary.range;
+    if (!map.has(date)) {
+      map.set(date, wtSummary);
+      return;
+    }
+    const summary = map.get(date)
+    summary.branches = summary.branches.concat(wtSummary.branches);
+    // TODO: grand_total can be calculated...
+  });
+
+  return [...map.values()];
 }
